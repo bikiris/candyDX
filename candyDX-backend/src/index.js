@@ -123,13 +123,25 @@ const getCloseScores = async (userID) => {
     return b.calculatedData.rate - a.calculatedData.rate;
   });
 
-  closeScores.forEach((pb) => {
+  const finalResponse = closeScores.map((pb) => {
     const song = songs.find((song) => song.id === pb.songID);
     const chart = charts.find((chart) => chart.chartID === pb.chartID);
     const nextRank = getNextRankByAchievement(pb.scoreData.percent);
     const nextRating = getRatingByLevelAndRank(chart.levelNum, nextRank);
     console.log(`${song.title} - ${chart.levelNum} - ${pb.scoreData.percent} - ${pb.calculatedData.rate} - scorefixed: ${nextRank} - ${nextRating}`);
-  });
+    return {
+      title: song.title,
+      level: chart.levelNum,
+      percent: pb.scoreData.percent,
+      rate: pb.calculatedData.rate,
+      nextRank: nextRank,
+      nextRating: nextRating,
+    };
+  }).sort((a, b) => {
+    return b.nextRating - a.nextRating;
+  })
+
+  return finalResponse;
 }
 
 
