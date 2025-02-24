@@ -45,20 +45,20 @@ const getTop100Scores = async (userID) => {
 }
 
 const RANK_DEFINITION = [
-  {minAchv: 100.5, factor: 0.224, title: 'SSS+'},
+  {minAchv: 100.5, factor: 0.224, title: 'SSS+', maxAchv: 100.1},
   {minAchv: 100.0, factor: 0.216, title: 'SSS', maxAchv: 100.4999, maxFactor: 0.222},
   {minAchv: 99.5, factor: 0.211, title: 'SS+', maxAchv: 99.9999, maxFactor: 0.214},
-  {minAchv: 99.0, factor: 0.208, title: 'SS'},
+  {minAchv: 99.0, factor: 0.208, title: 'SS', maxAchv: 99.4999},
   {minAchv: 98.0, factor: 0.203, title: 'S+', maxAchv: 98.9999, maxFactor: 0.206},
-  {minAchv: 97.0, factor: 0.2, title: 'S'},
+  {minAchv: 97.0, factor: 0.2, title: 'S', maxAchv: 97.9999},
   {minAchv: 94.0, factor: 0.168, title: 'AAA', maxAchv: 96.9999, maxFactor: 0.176},
-  {minAchv: 90.0, factor: 0.152, title: 'AA'},
-  {minAchv: 80.0, factor: 0.136, title: 'A'},
+  {minAchv: 90.0, factor: 0.152, title: 'AA', maxAchv: 93.9999},
+  {minAchv: 80.0, factor: 0.136, title: 'A', maxAchv: 89.9999},
   {minAchv: 75.0, factor: 0.12, title: 'BBB', maxAchv: 79.9999, maxFactor: 0.128},
-  {minAchv: 70.0, factor: 0.112, title: 'BB'},
-  {minAchv: 60.0, factor: 0.096, title: 'B'},
-  {minAchv: 50.0, factor: 0.08, title: 'C'},
-  {minAchv: 0.0, factor: 0.016, title: 'D'},
+  {minAchv: 70.0, factor: 0.112, title: 'BB', maxAchv: 74.9999},
+  {minAchv: 60.0, factor: 0.096, title: 'B', maxAchv: 69.9999},
+  {minAchv: 50.0, factor: 0.08, title: 'C', maxAchv: 59.9999},
+  {minAchv: 0.0, factor: 0.016, title: 'D', maxAchv: 49.9999},
 ];
 
 
@@ -84,20 +84,20 @@ const getRatingByLevelAndRank = (level, rank) => {
 }
 
 const getNextRankByAchievement = (achievement) => {
-  const findRank = RANK_DEFINITION.find(rank => {
-    if(rank.minAchv > achievement) {
+  const findRankIndex = RANK_DEFINITION.findIndex( (rank) => {
+    if(rank.minAchv <= achievement && (!rank.maxAchv || rank.maxAchv >= achievement)) {
       return true;
     }
     return false;
   });
 
-  if(!findRank) {
-    console.log("You are already at the top rank");
+  if(!findRankIndex || findRankIndex === 0) {
+    console.log("top rank");
     return "No rank found";
   }
 
   //console.log(findRank.title, findRank.minAchv);
-  return findRank.title;
+  return RANK_DEFINITION[findRankIndex-1].title;
 }
 
 
@@ -128,7 +128,7 @@ const getCloseScores = async (userID) => {
     const chart = charts.find((chart) => chart.chartID === pb.chartID);
     const nextRank = getNextRankByAchievement(pb.scoreData.percent);
     const nextRating = getRatingByLevelAndRank(chart.levelNum, nextRank);
-    console.log(`${song.title} - ${chart.levelNum} - ${pb.scoreData.percent} - ${pb.calculatedData.rate} - scorefixed: ${nextRating}`);
+    console.log(`${song.title} - ${chart.levelNum} - ${pb.scoreData.percent} - ${pb.calculatedData.rate} - scorefixed: ${nextRank} - ${nextRating}`);
   });
 }
 
