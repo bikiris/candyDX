@@ -2,8 +2,11 @@ const express = require("express");
 const app = express();
 const port = 3000;
 
+app.use(express.json());
+
 const { getAllScores } = require("./services/kamaiService.js");
 const { getAllChartEstimateDiff } = require("./services/divingfishService.js");
+const { bindUser } = require("./services/prismaService.js");
 
 const getTop100Scores = async (userID) => {
   const response = await getAllScores(userID);
@@ -61,7 +64,6 @@ const RANK_DEFINITION = [
   {minAchv: 0.0, factor: 0.016, title: 'D', maxAchv: 49.9999},
 ];
 
-
 const getRatingByLevelAndRank = (level, rank) => {
   const findRank = RANK_DEFINITION.find(r => {
     if(r.title === rank) {
@@ -99,7 +101,6 @@ const getNextRankByAchievement = (achievement) => {
   //console.log(findRank.title, findRank.minAchv);
   return RANK_DEFINITION[findRankIndex-1].title;
 }
-
 
 const filterCloseScores = (scores) => {
   //99.9000 - 99.9999, 100.4000 - 100.4999
@@ -161,7 +162,11 @@ app.get("/closeScores/:userID", async (req, res) => {
   res.json(closeScores);
 });
 
-
+app.post("/bindUser", async (req, res) => {
+  const {discordID, kamaiID} = req.body;
+  const response = await bindUser(discordID, kamaiID);
+  res.json(response);
+});
 
 app.listen(port, () => {
   console.log(`candyDX listening at http://localhost:${port}`);
