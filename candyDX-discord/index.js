@@ -17,13 +17,11 @@ client.commands.set(chokeCommand.data.name, chokeCommand);
 client.commands.set(bindCommand.data.name, bindCommand);
 
 client.on(Events.InteractionCreate, async interaction => {
-	console.log(interaction);
   try{
 		await interaction.client.commands.get(interaction.commandName).execute(interaction);
 	}catch(e) {
 		console.log("failed execution");
 	}
-  
 });
 
 
