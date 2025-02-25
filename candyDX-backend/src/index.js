@@ -164,8 +164,9 @@ app.get("/top100/", async (req, res) => {
   res.json(top100Scores);
 });
 
-app.get("/closeScores/", async (req, res) => {
-  let {discordID, kamaiID} = req.body;
+app.get("/closeScores", async (req, res) => {
+  let {discordID, kamaiID} = req.query;
+
   if(discordID){
     kamaiID = await getUser(discordID);
   }

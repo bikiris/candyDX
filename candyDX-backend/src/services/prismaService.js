@@ -35,7 +35,7 @@ const getUser = async (discordID) => {
         discord_id: discordID,
       },
     });
-    return user;
+    return user.kamai_tachi_id;
   } catch (e) {
     console.log(e);
   }
