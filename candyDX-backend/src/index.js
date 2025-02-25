@@ -6,7 +6,7 @@ app.use(express.json());
 
 const { getAllScores } = require("./services/kamaiService.js");
 const { getAllChartEstimateDiff } = require("./services/divingfishService.js");
-const { bindUser } = require("./services/prismaService.js");
+const { bindUser, getUser } = require("./services/prismaService.js");
 
 const getTop100Scores = async (userID) => {
   const response = await getAllScores(userID);
@@ -150,15 +150,30 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.get("/top100/:userID", async (req, res) => {
-  const userID = req.params.userID;
-  const top100Scores = await getTop100Scores(userID);
+app.get("/top100/", async (req, res) => {
+  let {discordID, kamaiID} = req.body;
+  if(discordID){
+    kamaiID = await getUser(discordID);
+  }
+  if(!kamaiID) {
+    res.json("No kamai ID found");
+    return;
+  }
+
+  const top100Scores = await getTop100Scores(kamaiID);
   res.json(top100Scores);
 });
 
-app.get("/closeScores/:userID", async (req, res) => {
-  const userID = req.params.userID;
-  const closeScores = await getCloseScores(userID);
+app.get("/closeScores/", async (req, res) => {
+  let {discordID, kamaiID} = req.body;
+  if(discordID){
+    kamaiID = await getUser(discordID);
+  }
+  if(!kamaiID) {
+    res.json("No kamai ID found");
+    return;
+  }
+  const closeScores = await getCloseScores(kamaiID);
   res.json(closeScores);
 });
 
