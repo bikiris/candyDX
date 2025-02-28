@@ -4,7 +4,7 @@ const port = 3000;
 
 app.use(express.json());
 
-const { getAllScores } = require("./services/kamaiService.js");
+const { getAllScores, getKamaiUser } = require("./services/kamaiService.js");
 const { getAllChartEstimateDiff } = require("./services/divingfishService.js");
 const { bindUser, getUser } = require("./services/prismaService.js");
 
@@ -171,7 +171,7 @@ app.get("/closeScores", async (req, res) => {
     kamaiID = await getUser(discordID);
   }
   if(!kamaiID) {
-    res.json("No kamai ID found");
+    res.status.json({"message" : "No kamai ID found"});
     return;
   }
   const closeScores = await getCloseScores(kamaiID);
@@ -180,8 +180,13 @@ app.get("/closeScores", async (req, res) => {
 
 app.post("/bindUser", async (req, res) => {
   const {discordID, kamaiID} = req.body;
-  const response = await bindUser(discordID, kamaiID);
-  res.json(response);
+  const kamaiUser = await getKamaiUser(kamaiID);
+  if(!kamaiUser) {
+    res.status(404).json({'message' : "No kamai user found"});
+    return;
+  }
+  const response = await bindUser(discordID, kamaiUser);
+  res.status(200).json(response);
 });
 
 app.listen(port, () => {

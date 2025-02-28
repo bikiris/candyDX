@@ -1,10 +1,11 @@
 const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
+const axios = require("axios");
 
 const bindUser = async (discordID, kamaiID) => {
   try {
-    if (getUser(discordID)) {
+    if (await getUser(discordID)) {
       const user = await prisma.user.update({
         where: {
           discord_id: discordID,
@@ -21,11 +22,12 @@ const bindUser = async (discordID, kamaiID) => {
         },
       });
     }
+    return true;
   } catch (e) {
-    console.log(e);
+    console.log("user binding failed", e);
   }
 
-  return true;
+  return false;
 };
 
 const getUser = async (discordID) => {
@@ -35,9 +37,11 @@ const getUser = async (discordID) => {
         discord_id: discordID,
       },
     });
-    return user.kamai_tachi_id;
+    if (user) {
+      return user.kamai_tachi_id;
+    }
   } catch (e) {
-    console.log(e);
+    console.log(`${discordID} user not found`)
   }
 
   return null;

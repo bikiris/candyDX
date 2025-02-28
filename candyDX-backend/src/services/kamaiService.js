@@ -7,4 +7,17 @@ const getAllScores = async (userID) => {
   return response;
 }
 
-module.exports = { getAllScores };
+const getKamaiUser = async (user) => {
+  try {
+    const API_URL = `https://kamai.tachi.ac/api/v1/users/${user}`;
+    const response = await axios.get(API_URL);
+    return response.data.body.id+"";
+
+  } catch (e) {
+    console.log(`Error: ${user} user not found`);
+  }
+  
+  return null;
+}
+
+module.exports = { getAllScores, getKamaiUser };
