@@ -4,13 +4,14 @@ require('dotenv').config();
 
 const API_URL = process.env.API_URL;
 const axios = require('axios');
+const logger = require('../logger.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('topchoke')
-    .setDescription('Get the top choke scores for a user'),
+    .setDescription('Get your top 10 choke scores'),
   async execute(interaction) {
-    const embedResponse = new EmbedBuilder().setTitle('Top Choke Scores');
+    const embedResponse = new EmbedBuilder().setTitle('Top 10 Choke Scores');
     try {
       const response = await axios.get(API_URL + 'closeScores', {
         params: {
@@ -19,8 +20,7 @@ module.exports = {
       });
       response.data.slice(0, 10).forEach((score, index) => {
         embedResponse.addFields({
-          name: `${index}`,
-          value: `${score.title}, ${score.level}, ${score.percent}, ${score.nextRank}, ${score.nextRating}`,
+          name: '', value: `${index + 1}. ${score.title} - ${score.levelNum} - ${score.percent}% - Next Rank Rating: ${score.nextRating}`,
         });
       });
       logger.info(`${interaction.user.id} has requested top choke scores`);
@@ -30,6 +30,5 @@ module.exports = {
       logger.error(e);
       await interaction.reply('Failed to get top choke scores');
     }
-    // await interaction.reply(`${topChoke.title} - ${topChoke.level} - ${topChoke.percent} - ${topChoke.nextRating}`);
   },
 };
