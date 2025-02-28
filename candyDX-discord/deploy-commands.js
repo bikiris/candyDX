@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config();
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 const CLIENT_ID = '1026535098478252062';
 const GUILD_ID = '675556524055330837';
@@ -7,9 +7,9 @@ const GUILD_ID = '675556524055330837';
 const { REST, Routes } = require('discord.js');
 
 
-const commands = []
-commands.push(require('./commands/getChokeScores.js').data.toJSON())
-commands.push(require('./commands/bindID.js').data.toJSON())
+const commands = [];
+commands.push(require('./commands/getChokeScores.js').data.toJSON());
+commands.push(require('./commands/bindID.js').data.toJSON());
 
 
 const rest = new REST().setToken(DISCORD_TOKEN);
@@ -25,7 +25,8 @@ const rest = new REST().setToken(DISCORD_TOKEN);
 		);
 
 		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
-	} catch (error) {
+	}
+ catch (error) {
 		// And of course, make sure you catch and log any errors!
 		console.error(error);
 	}

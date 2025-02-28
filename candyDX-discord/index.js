@@ -1,7 +1,7 @@
-require('dotenv').config()
+require('dotenv').config();
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
-const { Client, Events, GatewayIntentBits, Collection  } = require('discord.js');
+const { Client, Events, GatewayIntentBits, Collection } = require('discord.js');
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 client.once(Events.ClientReady, readyClient => {
@@ -9,18 +9,19 @@ client.once(Events.ClientReady, readyClient => {
 });
 
 
-const chokeCommand = require('./commands/getChokeScores.js')
-const bindCommand = require('./commands/bindID.js')
+const chokeCommand = require('./commands/getChokeScores.js');
+const bindCommand = require('./commands/bindID.js');
 
 client.commands = new Collection();
 client.commands.set(chokeCommand.data.name, chokeCommand);
 client.commands.set(bindCommand.data.name, bindCommand);
 
 client.on(Events.InteractionCreate, async interaction => {
-  try{
+  try {
 		await interaction.client.commands.get(interaction.commandName).execute(interaction);
-	}catch(e) {
-		console.log("failed execution");
+	}
+  catch (error) {
+		console.log('failed execution');
 	}
 });
 
