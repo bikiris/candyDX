@@ -17,17 +17,22 @@ module.exports = {
         .setRequired(true),
     ),
   async execute(interaction) {
-    const embedResponse = new EmbedBuilder().setTitle('Binded User');
+    const embedResponse = new EmbedBuilder();
     try {
-      await axios.post(API_URL + 'bindUser', {
+      const response = await axios.post(API_URL + 'bindUser', {
         discordID: interaction.user.id,
         kamaiID: interaction.options.getString('kamai'),
       });
+      if (response.status !== 200) {
+        throw new Error('User not found');
+      }
       logger.info(`${interaction.user.id} has binded kamai ID ${interaction.options.getString('kamai')}`);
+      embedResponse.setTitle(`Binded user ${interaction.options.getString('kamai')}`);
       embedResponse.setDescription('User has been binded');
     }
     catch (e) {
       logger.error(e);
+      embedResponse.setTitle(`${interaction.options.getString('kamai')} was not found`);
       embedResponse.setDescription('Failed to bind user');
     }
     await interaction.reply({ embeds: [embedResponse] });
