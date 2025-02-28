@@ -1,7 +1,6 @@
 require('dotenv').config();
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 const CLIENT_ID = process.env.CLIENT_ID;
-const GUILD_ID = process.env.GUILD_ID;
 
 const logger = require('./logger.js');
 const fs = require('fs');
@@ -28,7 +27,7 @@ const rest = new REST().setToken(DISCORD_TOKEN);
 	try {
 		logger.info(`Started refreshing ${commands.length} application (/) commands.`);
 		const data = await rest.put(
-			Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
+			Routes.applicationCommands(CLIENT_ID),
 			{ body: commands },
 		);
 		logger.info(`Successfully reloaded ${data.length} application (/) commands.`);
