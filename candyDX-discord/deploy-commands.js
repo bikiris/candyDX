@@ -3,6 +3,7 @@ const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 const CLIENT_ID = process.env.CLIENT_ID;
 const GUILD_ID = process.env.GUILD_ID;
 
+const logger = require('./logger.js');
 const fs = require('fs');
 const path = require('path');
 const { REST, Routes } = require('discord.js');
@@ -17,7 +18,7 @@ for (const file of commandFolders) {
 		commands.push(command.data.toJSON());
 	}
 	else {
-		console.log(`Invalid command file: ${file}`);
+		logger.warn(`Invalid command file: ${file}`);
 	}
 }
 
@@ -25,18 +26,14 @@ const rest = new REST().setToken(DISCORD_TOKEN);
 
 (async () => {
 	try {
-		console.log(`Started refreshing ${commands.length} application (/) commands.`);
-
-		// The put method is used to fully refresh all commands in the guild with the current set
+		logger.info(`Started refreshing ${commands.length} application (/) commands.`);
 		const data = await rest.put(
 			Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
 			{ body: commands },
 		);
-
-		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+		logger.info(`Successfully reloaded ${data.length} application (/) commands.`);
 	}
- catch (error) {
-		// And of course, make sure you catch and log any errors!
-		console.error(error);
+ catch (e) {
+		logger.error(e);
 	}
 })();

@@ -12,23 +12,22 @@ module.exports = {
   async execute(interaction) {
     const embedResponse = new EmbedBuilder().setTitle('Top Choke Scores');
     try {
-      console.log(interaction.user.id);
       const response = await axios.get(API_URL + 'closeScores', {
         params: {
           discordID: interaction.user.id,
         },
       });
-      console.log(response.data);
       response.data.slice(0, 10).forEach((score, index) => {
         embedResponse.addFields({
           name: `${index}`,
           value: `${score.title}, ${score.level}, ${score.percent}, ${score.nextRank}, ${score.nextRating}`,
         });
       });
+      logger.info(`${interaction.user.id} has requested top choke scores`);
       await interaction.reply({ embeds: [embedResponse] });
     }
     catch (e) {
-      console.log(e);
+      logger.error(e);
       await interaction.reply('Failed to get top choke scores');
     }
     // await interaction.reply(`${topChoke.title} - ${topChoke.level} - ${topChoke.percent} - ${topChoke.nextRating}`);

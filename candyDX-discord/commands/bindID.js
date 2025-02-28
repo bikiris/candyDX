@@ -22,13 +22,13 @@ module.exports = {
         discordID: interaction.user.id,
         kamaiID: interaction.options.getString('kamai'),
       });
+      logger.info(`${interaction.user.id} has binded kamai ID ${interaction.options.getString('kamai')}`);
       embedResponse.setDescription('User has been binded');
     }
     catch (e) {
-      console.log(e);
+      logger.error(e);
       embedResponse.setDescription('Failed to bind user');
     }
     await interaction.reply({ embeds: [embedResponse] });
-    // await interaction.reply(`${topChoke.title} - ${topChoke.level} - ${topChoke.percent} - ${topChoke.nextRating}`);
   },
 };
