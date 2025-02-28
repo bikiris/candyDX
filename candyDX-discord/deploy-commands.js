@@ -1,16 +1,25 @@
 require('dotenv').config();
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
-const CLIENT_ID = '1026535098478252062';
-const GUILD_ID = '675556524055330837';
+const CLIENT_ID = process.env.CLIENT_ID;
+const GUILD_ID = process.env.GUILD_ID;
 
-
+const fs = require('fs');
+const path = require('path');
 const { REST, Routes } = require('discord.js');
 
-
 const commands = [];
-commands.push(require('./commands/getChokeScores.js').data.toJSON());
-commands.push(require('./commands/bindID.js').data.toJSON());
+const folderPath = path.join(__dirname, 'commands');
+const commandFolders = fs.readdirSync(folderPath);
 
+for (const file of commandFolders) {
+	const command = require(`${folderPath}/${file}`);
+	if ('data' in command && 'execute' in command) {
+		commands.push(command.data.toJSON());
+	}
+	else {
+		console.log(`Invalid command file: ${file}`);
+	}
+}
 
 const rest = new REST().setToken(DISCORD_TOKEN);
 
