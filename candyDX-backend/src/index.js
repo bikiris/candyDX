@@ -3,6 +3,7 @@ const app = express();
 const port = 3000;
 
 app.use(express.json());
+const logger = require("./logger.js");
 
 const { getAllScores, getKamaiUser } = require("./services/kamaiService.js");
 const { getAllChartEstimateDiff } = require("./services/divingfishService.js");
@@ -112,7 +113,7 @@ const getCloseScores = async (userID) => {
   const response = await getAllScores(userID);
 
   if(response.data.success === false) {
-    console.log("Error: ", response.data.message);
+    logger.error("Error: ", response.data.message);
     return;
   }
 
@@ -156,11 +157,13 @@ app.get("/top100/", async (req, res) => {
     kamaiID = await getUser(discordID);
   }
   if(!kamaiID) {
+    logger.info(`No kamai ID found for discord user ${discordID} or kamai user ${kamaiID}`);
     res.json("No kamai ID found");
     return;
   }
 
   const top100Scores = await getTop100Scores(kamaiID);
+  logger.info(`Found top 100 scores for kamai user ${kamaiID}`);
   res.json(top100Scores);
 });
 
@@ -171,10 +174,12 @@ app.get("/closeScores", async (req, res) => {
     kamaiID = await getUser(discordID);
   }
   if(!kamaiID) {
+    logger.info(`No kamai ID found for discord user ${discordID} or kamai user ${kamaiID}`);
     res.status.json({"message" : "No kamai ID found"});
     return;
   }
   const closeScores = await getCloseScores(kamaiID);
+  logger.info(`Found ${closeScores.length} close scores for kamai user ${kamaiID}`);
   res.json(closeScores);
 });
 
@@ -182,13 +187,15 @@ app.post("/bindUser", async (req, res) => {
   const {discordID, kamaiID} = req.body;
   const kamaiUser = await getKamaiUser(kamaiID);
   if(!kamaiUser) {
+    logger.info(`Failed to find kamai user with ID: ${kamaiID}`);
     res.status(404).json({'message' : "No kamai user found"});
     return;
   }
   const response = await bindUser(discordID, kamaiUser);
+  logger.info(`Binded discord user ${discordID} with kamai user ${kamaiID}`);
   res.status(200).json(response);
 });
 
 app.listen(port, () => {
-  console.log(`candyDX listening at http://localhost:${port}`);
+  logger.info(`candyDX listening at http://localhost:${port}`);
 });
