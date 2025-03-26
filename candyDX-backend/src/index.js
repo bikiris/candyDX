@@ -6,47 +6,9 @@ app.use(express.json());
 const logger = require("./logger.js");
 
 const { getAllScores, getKamaiUser } = require("./services/kamaiService.js");
-const { getAllChartEstimateDiff } = require("./services/divingfishService.js");
 const { bindUser, getUser } = require("./services/prismaService.js");
+const { getTop100Scores } = require("./utils/scores.js");
 
-const getTop100Scores = async (userID) => {
-  const response = await getAllScores(userID);
-
-  if(response.data.success === false) {
-    console.log("Error: ", response.data.message);
-    return;
-  }
-
-  const pbs = response.data.body.pbs; // chartID, calculatedData.rate, scoreData.percent, songID
-  const songs = response.data.body.songs; //id, title
-  const charts = response.data.body.charts; //chartID, data.inGameID, songID, level, leveNum, versions (find first appearance), difficulty {"Master", "Re:Master", "Expert", "DX Master", "Advanced", }
-  
-  pbs.sort((a, b) => {
-    return b.calculatedData.rate - a.calculatedData.rate;
-  });
-
-  const top100pbs = pbs.slice(0, 100);
-  const allFitDiff = await getAllChartEstimateDiff();
-
-  top100pbs.forEach((pb) => {
-    const song = songs.find((song) => song.id === pb.songID);
-    const chart = charts.find((chart) => chart.chartID === pb.chartID);
-    const chartID = chart.data.inGameID;
-    const targetChart = allFitDiff[chartID];
-    if(!targetChart || targetChart.length === 0) {
-      //divingfish doesn't have this chart due to version difference
-      console.log(`${song.title} - ${pb.calculatedData.rate} - ${chart.levelNum} - no estimate diff`);
-      return;
-    }
-    const targetDiff = targetChart.find(diff => diff.diff === chart.level);
-    if (!targetDiff) {
-      //this happens due to levelNum changes in different game version
-      console.log(`${song.title} - ${pb.calculatedData.rate} - ${chart.level} - ${chart.levelNum} - No matching difficulty found for this chart`);
-      return;
-    }
-    console.log(`${song.title} - ${pb.calculatedData.rate} - ${chart.levelNum} - ${targetDiff.fit_diff}`);
-  });
-}
 
 const RANK_DEFINITION = [
   {minAchv: 100.5, factor: 0.224, title: 'SSS+', maxAchv: 100.1},
@@ -194,6 +156,11 @@ app.post("/bindUser", async (req, res) => {
   const response = await bindUser(discordID, kamaiUser);
   logger.info(`Binded discord user ${discordID} with kamai user ${kamaiID}`);
   res.status(200).json(response);
+});
+
+app.get("/test", async (req, res) => {
+  const response = await getTop100Scores(1977);
+  res.json(response);
 });
 
 app.listen(port, () => {
