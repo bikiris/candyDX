@@ -7,7 +7,7 @@ const logger = require("./logger.js");
 
 const { getAllScores, getKamaiUser } = require("./services/kamaiService.js");
 const { bindUser, getUser } = require("./services/prismaService.js");
-const { getTop100Scores } = require("./utils/scores.js");
+const { getTop100Scores ,getBest50Scores } = require("./utils/scores.js");
 
 
 const RANK_DEFINITION = [
@@ -158,9 +158,20 @@ app.post("/bindUser", async (req, res) => {
   res.status(200).json(response);
 });
 
-app.get("/test", async (req, res) => {
-  const response = await getTop100Scores(1977);
-  res.json(response);
+app.get("/b50", async (req, res) => {
+  let {discordID, kamaiID} = req.query;
+
+  if(discordID){
+    kamaiID = await getUser(discordID);
+  }
+  if(!kamaiID) {
+    logger.info(`No kamai ID found for discord user ${discordID} or kamai user ${kamaiID}`);
+    res.status.json({"message" : "No kamai ID found"});
+    return;
+  }
+  const best50Scores = await getBest50Scores(kamaiID);
+  logger.info(`Found best 50 scores for kamai user ${kamaiID}`);
+  res.json(best50Scores);
 });
 
 app.listen(port, () => {
