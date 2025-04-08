@@ -3,6 +3,8 @@ const logger = require("../logger");
 const { getAllScores } = require("../services/kamaiService.js");
 const { getAllChartEstimateDiff } = require("../services/divingfishService.js");
 
+const CURRENT_VERSION = "prism";
+
 
 const getProcessedScores = async (userID) => {
   const rawDataFromKamai = await getAllScores(userID);
@@ -51,5 +53,49 @@ const getTop100Scores = async (userID) => {
   
 };
 
+const getOld35Scores = async (userID) => {
+  const rawScores = await getProcessedScores(userID);
 
-module.exports = { getProcessedScores, getTop100Scores };
+  if (!rawScores || rawScores.length === 0) {
+    console.log("Error: ", rawScores.data.message);
+    return;
+  }
+
+  const rawOldScores = rawScores.filter((score) => {
+    return !score.version.includes(CURRENT_VERSION);
+  });
+
+  rawOldScores.sort((a, b) => {
+    return b.rating - a.rating;
+  });
+
+  return rawOldScores.slice(0, 35);
+}
+
+const getNew15Scores = async (userID) => {
+  const rawScores = await getProcessedScores(userID);
+
+  if (!rawScores || rawScores.length === 0) {
+    console.log("Error: ", rawScores.data.message);
+    return;
+  }
+
+  const rawNewScores = rawScores.filter((score) => {
+    return score.version.includes(CURRENT_VERSION);
+  });
+
+  rawNewScores.sort((a, b) => {
+    return b.rating - a.rating;
+  });
+
+  return rawNewScores.slice(0, 15);
+}
+
+const getBest50Scores = async (userID) => {
+  return [
+    ...await getOld35Scores(userID),
+    ...await getNew15Scores(userID)
+  ]
+}
+
+module.exports = { getProcessedScores, getTop100Scores, getOld35Scores, getNew15Scores, getBest50Scores };
