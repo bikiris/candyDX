@@ -1,12 +1,12 @@
-const logger = require("../logger.ts");
+import logger from "../logger.ts";
 
-const { getAllScores } = require("../services/kamaiService.ts");
-const { getAllChartEstimateDiff } = require("../services/divingfishService.ts");
+import { getAllScores } from "../services/kamaiService.ts";
+import { getAllChartEstimateDiff } from "../services/divingfishService.ts";
 
 const CURRENT_VERSION = "prism";
 
 
-const getProcessedScores = async (userID) => {
+async function  getProcessedScores (userID) {
   const rawDataFromKamai = await getAllScores(userID);
 
   if (rawDataFromKamai.data.success === false) {
@@ -98,4 +98,4 @@ const getBest50Scores = async (userID) => {
   ]
 }
 
-module.exports = { getProcessedScores, getTop100Scores, getOld35Scores, getNew15Scores, getBest50Scores };
+export { getProcessedScores, getTop100Scores, getOld35Scores, getNew15Scores, getBest50Scores };

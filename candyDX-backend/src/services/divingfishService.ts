@@ -1,6 +1,6 @@
-const axios = require("axios");
+import axios from "axios";
 
-const getAllChartEstimateDiff = async () => {
+async function getAllChartEstimateDiff () {
   const API_URL = `https://www.diving-fish.com/api/maimaidxprober/chart_stats`;
   const response = await axios.get(API_URL);
   
@@ -8,4 +8,4 @@ const getAllChartEstimateDiff = async () => {
   return chartStats;
 }
 
-module.exports = { getAllChartEstimateDiff };
+export { getAllChartEstimateDiff };

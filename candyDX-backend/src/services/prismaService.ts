@@ -1,9 +1,8 @@
-const { PrismaClient } = require("@prisma/client");
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
-const axios = require("axios");
 
-const bindUser = async (discordID, kamaiID) => {
+async function bindUser (discordID, kamaiID) {
   try {
     if (await getUser(discordID)) {
       const user = await prisma.user.update({
@@ -30,7 +29,7 @@ const bindUser = async (discordID, kamaiID) => {
   return false;
 };
 
-const getUser = async (discordID) => {
+async function getUser(discordID) {
   try {
     const user = await prisma.user.findUnique({
       where: {
@@ -48,4 +47,4 @@ const getUser = async (discordID) => {
   
 };
 
-module.exports = { bindUser, getUser };
+export { bindUser, getUser };

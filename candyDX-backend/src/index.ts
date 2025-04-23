@@ -1,13 +1,13 @@
-const express = require("express");
+import express from "express";
 const app = express();
 const port = 3000;
 
 app.use(express.json());
-const logger = require("./logger.ts");
+import logger from "./logger.ts";
 
-const { getAllScores, getKamaiUser } = require("./services/kamaiService.ts");
-const { bindUser, getUser } = require("./services/prismaService.ts");
-const { getTop100Scores ,getBest50Scores } = require("./utils/scores.ts");
+import { getKamaiUser, getAllScores } from "./services/kamaiService.ts";
+import { bindUser, getUser } from "./services/prismaService.ts";
+import { getTop100Scores, getBest50Scores } from "./utils/scores.ts";
 
 
 const RANK_DEFINITION = [
@@ -137,7 +137,8 @@ app.get("/closeScores", async (req, res) => {
   }
   if(!kamaiID) {
     logger.info(`No kamai ID found for discord user ${discordID} or kamai user ${kamaiID}`);
-    res.status.json({"message" : "No kamai ID found"});
+    res.status(400);
+    res.json({"message" : "No kamai ID found"});
     return;
   }
   const closeScores = await getCloseScores(kamaiID);
@@ -150,7 +151,8 @@ app.post("/bindUser", async (req, res) => {
   const kamaiUser = await getKamaiUser(kamaiID);
   if(!kamaiUser) {
     logger.info(`Failed to find kamai user with ID: ${kamaiID}`);
-    res.status(404).json({'message' : "No kamai user found"});
+    res.status(400);
+    res.json({'message' : "No kamai user found"});
     return;
   }
   const response = await bindUser(discordID, kamaiUser);
@@ -166,7 +168,7 @@ app.get("/b50", async (req, res) => {
   }
   if(!kamaiID) {
     logger.info(`No kamai ID found for discord user ${discordID} or kamai user ${kamaiID}`);
-    res.status.json({"message" : "No kamai ID found"});
+    res.status(404).json({"message" : "No kamai ID found"});
     return;
   }
   const best50Scores = await getBest50Scores(kamaiID);

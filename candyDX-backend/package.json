@@ -2,9 +2,11 @@
   "name": "candydx-backend",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./src/index.ts"
+    "start": "node ./src/index.ts",
+    "dev": "node --loader ts-node/esm ./src/index.ts"
   },
   "author": "<fengshengchen0001@outlook.com>",
   "description": "",
@@ -15,6 +17,10 @@
     "winston": "^3.17.0"
   },
   "devDependencies": {
-    "prisma": "^6.4.1"
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.14.1",
+    "prisma": "^6.4.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   }
 }
