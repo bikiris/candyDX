@@ -3,11 +3,11 @@ const app = express();
 const port = 3000;
 
 app.use(express.json());
-const logger = require("./logger.js");
+const logger = require("./logger.ts");
 
-const { getAllScores, getKamaiUser } = require("./services/kamaiService.js");
-const { bindUser, getUser } = require("./services/prismaService.js");
-const { getTop100Scores ,getBest50Scores } = require("./utils/scores.js");
+const { getAllScores, getKamaiUser } = require("./services/kamaiService.ts");
+const { bindUser, getUser } = require("./services/prismaService.ts");
+const { getTop100Scores ,getBest50Scores } = require("./utils/scores.ts");
 
 
 const RANK_DEFINITION = [

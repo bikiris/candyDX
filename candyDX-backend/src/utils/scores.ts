@@ -1,7 +1,7 @@
-const logger = require("../logger");
+const logger = require("../logger.ts");
 
-const { getAllScores } = require("../services/kamaiService.js");
-const { getAllChartEstimateDiff } = require("../services/divingfishService.js");
+const { getAllScores } = require("../services/kamaiService.ts");
+const { getAllChartEstimateDiff } = require("../services/divingfishService.ts");
 
 const CURRENT_VERSION = "prism";
 
