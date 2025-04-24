@@ -65,7 +65,7 @@ async function getNextRankByAchievement (achievement) {
   return RANK_DEFINITION[findRankIndex-1].title;
 }
 
-async function filterCloseScores (scores) {
+function filterCloseScores (scores) {
   //99.9000 - 99.9999, 100.4000 - 100.4999
   const closeScores = scores.filter(score => (score.scoreData.percent >= 99.9 && score.scoreData.percent <= 99.9999) || (score.scoreData.percent >= 100.4000 && score.scoreData.percent <= 100.4999));
   return closeScores;
@@ -83,7 +83,7 @@ async function getCloseScores (userID) {
   const songs = response.data.body.songs; //id, title
   const charts = response.data.body.charts; //chartID, data.inGameID, songID, level, leveNum, versions (find first appearance), difficulty {"Master", "Re:Master", "Expert", "DX Master", "Advanced", }
   
-  const closeScores = filterCloseScores(pbs).sort((a, b) => {
+  let closeScores = filterCloseScores(pbs).sort((a, b) => {
     return b.calculatedData.rate - a.calculatedData.rate;
   });
 
