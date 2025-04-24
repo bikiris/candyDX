@@ -6,7 +6,7 @@ import { getAllChartEstimateDiff } from "../services/divingfishService.ts";
 const CURRENT_VERSION = "prism";
 
 
-async function  getProcessedScores (userID) {
+async function getProcessedScores (userID) {
   const rawDataFromKamai = await getAllScores(userID);
 
   if (rawDataFromKamai.data.success === false) {
@@ -36,7 +36,7 @@ async function  getProcessedScores (userID) {
   return finalResponse;
 };
 
-const getTop100Scores = async (userID) => {
+async function getTop100Scores (userID) {
   const rawScores = await getProcessedScores(userID);
 
   if (!rawScores || rawScores.length === 0) {
@@ -53,7 +53,7 @@ const getTop100Scores = async (userID) => {
   
 };
 
-const getOld35Scores = async (userID) => {
+async function getOld35Scores (userID) {
   const rawScores = await getProcessedScores(userID);
 
   if (!rawScores || rawScores.length === 0) {
@@ -72,7 +72,7 @@ const getOld35Scores = async (userID) => {
   return rawOldScores.slice(0, 35);
 }
 
-const getNew15Scores = async (userID) => {
+async function getNew15Scores (userID) {
   const rawScores = await getProcessedScores(userID);
 
   if (!rawScores || rawScores.length === 0) {
@@ -91,7 +91,7 @@ const getNew15Scores = async (userID) => {
   return rawNewScores.slice(0, 15);
 }
 
-const getBest50Scores = async (userID) => {
+async function getBest50Scores (userID) {
   return [
     ...await getOld35Scores(userID),
     ...await getNew15Scores(userID)

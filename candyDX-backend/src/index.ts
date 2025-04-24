@@ -27,7 +27,7 @@ const RANK_DEFINITION = [
   {minAchv: 0.0, factor: 0.016, title: 'D', maxAchv: 49.9999},
 ];
 
-const getRatingByLevelAndRank = (level, rank) => {
+async function getRatingByLevelAndRank (level, rank) {
   const findRank = RANK_DEFINITION.find(r => {
     if(r.title === rank) {
       return true;
@@ -48,7 +48,7 @@ const getRatingByLevelAndRank = (level, rank) => {
   return Math.floor(findRank.factor * level * findRank.minAchv);
 }
 
-const getNextRankByAchievement = (achievement) => {
+async function getNextRankByAchievement (achievement) {
   const findRankIndex = RANK_DEFINITION.findIndex( (rank) => {
     if(rank.minAchv <= achievement && (!rank.maxAchv || rank.maxAchv >= achievement)) {
       return true;
@@ -65,13 +65,13 @@ const getNextRankByAchievement = (achievement) => {
   return RANK_DEFINITION[findRankIndex-1].title;
 }
 
-const filterCloseScores = (scores) => {
+async function filterCloseScores (scores) {
   //99.9000 - 99.9999, 100.4000 - 100.4999
   const closeScores = scores.filter(score => (score.scoreData.percent >= 99.9 && score.scoreData.percent <= 99.9999) || (score.scoreData.percent >= 100.4000 && score.scoreData.percent <= 100.4999));
   return closeScores;
 }
 
-const getCloseScores = async (userID) => {
+async function getCloseScores (userID) {
   const response = await getAllScores(userID);
 
   if(response.data.success === false) {
